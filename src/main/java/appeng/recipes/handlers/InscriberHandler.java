@@ -14,7 +14,6 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -28,25 +27,34 @@ public class InscriberHandler implements IAERecipeFactory {
         JsonObject ingredients = JsonUtils.getJsonObject(json, "ingredients");
 
         List<ItemStack> middle = Arrays.asList(CraftingHelper.getIngredient(ingredients.get("middle"), ctx).getMatchingStacks());
-        List<ItemStack> top = Collections.emptyList();
+        ItemStack[] top = new ItemStack[]{null};
         if (ingredients.has("top")) {
-            top = Arrays.asList(CraftingHelper.getIngredient(JsonUtils.getJsonObject(ingredients, "top"), ctx).getMatchingStacks());
+            top = CraftingHelper.getIngredient(JsonUtils.getJsonObject(ingredients, "top"), ctx).getMatchingStacks();
         }
 
-        List<ItemStack> bottom = Collections.emptyList();
+        ItemStack[] bottom = new ItemStack[]{null};
         if (ingredients.has("bottom")) {
-            bottom = Arrays.asList(CraftingHelper.getIngredient(JsonUtils.getJsonObject(ingredients, "bottom"), ctx).getMatchingStacks());
+            bottom = CraftingHelper.getIngredient(JsonUtils.getJsonObject(ingredients, "bottom"), ctx).getMatchingStacks();
         }
 
         final IInscriberRegistry reg = AEApi.instance().registries().inscriber();
-        if (!top.isEmpty() || !bottom.isEmpty()) {
-            final IInscriberRecipeBuilder builder = reg.builder();
-            builder.withOutput(result);
-            builder.withProcessType("press".equals(mode) ? InscriberProcessType.PRESS : InscriberProcessType.INSCRIBE);
-            builder.withTopOptional(top);
-            builder.withInputs(middle);
-            builder.withBottomOptional(bottom);
-            reg.addRecipe(builder.build());
+        for (int i = 0; i < top.length; ++i) {
+            for (int j = 0; j < bottom.length; ++j) {
+                final IInscriberRecipeBuilder builder = reg.builder();
+                builder.withOutput(result);
+                builder.withProcessType("press".equals(mode) ? InscriberProcessType.PRESS : InscriberProcessType.INSCRIBE);
+                builder.withInputs(middle);
+
+                if (top[i] != null) {
+                    builder.withTopOptional(top[i]);
+                }
+                if (bottom[j] != null) {
+                    builder.withBottomOptional(bottom[j]);
+                }
+
+                reg.addRecipe(builder.build());
+            }
         }
     }
+
 }

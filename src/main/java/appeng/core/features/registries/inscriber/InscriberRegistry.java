@@ -75,8 +75,9 @@ public final class InscriberRegistry implements IInscriberRegistry {
         Preconditions.checkNotNull(recipe, "Tried to add (null) as inscriber recipe to the registry.");
 
         if (this.recipes.add(recipe)) {
-            this.optionals.addAll(recipe.getTopInputs());
-            this.optionals.addAll(recipe.getBottomInputs());
+            recipe.getTopOptional().ifPresent(this.optionals::add);
+            recipe.getBottomOptional().ifPresent(this.optionals::add);
+
             this.inputs.addAll(recipe.getInputs());
 
             return true;
@@ -109,8 +110,8 @@ public final class InscriberRegistry implements IInscriberRegistry {
     private static final class Builder implements IInscriberRecipeBuilder {
         private List<ItemStack> inputs;
         private ItemStack output;
-        private List<ItemStack> topOptional;
-        private List<ItemStack> bottomOptional;
+        private ItemStack topOptional;
+        private ItemStack bottomOptional;
         private InscriberProcessType type;
 
         @Nonnull
@@ -138,22 +139,22 @@ public final class InscriberRegistry implements IInscriberRegistry {
 
         @Nonnull
         @Override
-        public Builder withTopOptional(@Nonnull final Collection<ItemStack> topOptional) {
+        public Builder withTopOptional(@Nonnull final ItemStack topOptional) {
             Preconditions.checkNotNull(topOptional);
+            Preconditions.checkArgument(!topOptional.isEmpty());
 
-            this.topOptional = new ArrayList<>(topOptional.size());
-            this.topOptional.addAll(topOptional);
+            this.topOptional = topOptional;
 
             return this;
         }
 
         @Nonnull
         @Override
-        public Builder withBottomOptional(@Nonnull final Collection<ItemStack> bottomOptional) {
+        public Builder withBottomOptional(@Nonnull final ItemStack bottomOptional) {
             Preconditions.checkNotNull(bottomOptional);
+            Preconditions.checkArgument(!bottomOptional.isEmpty());
 
-            this.bottomOptional = new ArrayList<>(bottomOptional.size());
-            this.bottomOptional.addAll(bottomOptional);
+            this.bottomOptional = bottomOptional;
 
             return this;
         }

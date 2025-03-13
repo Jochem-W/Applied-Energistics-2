@@ -19,11 +19,12 @@
 package appeng.api.features;
 
 
-import net.minecraft.item.ItemStack;
-
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.item.ItemStack;
 
 
 /**
@@ -56,35 +57,21 @@ public interface IInscriberRecipe
 	@Nonnull
 	ItemStack getOutput();
 
-
-	@Nonnull
-	List<ItemStack> getTopInputs();
-
 	/**
 	 * gets the top optional
 	 *
 	 * @return item which is used top
 	 */
-	@Deprecated
 	@Nonnull
-	default Optional<ItemStack> getTopOptional(){
-		return getTopInputs().isEmpty() ? Optional.empty() : Optional.of(getTopInputs().get(0));
-	}
-
-
-	@Nonnull
-	List<ItemStack> getBottomInputs();
+	Optional<ItemStack> getTopOptional();
 
 	/**
 	 * gets the bottom optional
 	 *
 	 * @return item which is used bottom
 	 */
-	@Deprecated
 	@Nonnull
-	default Optional<ItemStack> getBottomOptional() {
-		return getBottomInputs().isEmpty() ? Optional.empty() : Optional.of(getBottomInputs().get(0));
-	}
+	Optional<ItemStack> getBottomOptional();
 
 	/**
 	 * type of inscriber process
