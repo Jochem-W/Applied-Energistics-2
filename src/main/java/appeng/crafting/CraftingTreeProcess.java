@@ -31,7 +31,6 @@ import com.google.common.collect.ImmutableCollection;
 import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
 import java.util.Map.Entry;
 
 
@@ -46,7 +45,6 @@ public class CraftingTreeProcess {
     boolean possible = true;
     private long crafts = 0;
     private long bytes = 0;
-    private ArrayList<IAEItemStack> containers;
 
     public CraftingTreeProcess(final ICraftingGrid cc, final CraftingJob job, final ICraftingPatternDetails details, final CraftingTreeNode craftingTreeNode, final int depth) {
         this.parent = craftingTreeNode;
@@ -201,14 +199,6 @@ public class CraftingTreeProcess {
             final IAEItemStack stack = entry.getKey().request(inv, entry.getValue() * amountOfTimes, src);
         }
 
-        if (this.containers != null) {
-            for (IAEItemStack iae : containers) {
-                inv.injectItems(iae, Actionable.MODULATE, src);
-            }
-            containers = null;
-        }
-        // assume its possible.
-
         // add crafting results..
         for (final IAEItemStack out : this.details.getCondensedOutputs()) {
             final IAEItemStack o = out.copy();
@@ -216,13 +206,6 @@ public class CraftingTreeProcess {
             inv.injectItems(o, Actionable.MODULATE, src);
         }
         this.crafts += amountOfTimes;
-    }
-
-    public void addContainers(IAEItemStack container) {
-        if (this.containers == null) {
-            this.containers = new ArrayList<>();
-        }
-        this.containers.add(container);
     }
 
     void dive(final CraftingJob job) {

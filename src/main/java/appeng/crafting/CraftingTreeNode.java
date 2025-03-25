@@ -32,10 +32,8 @@ import appeng.core.sync.network.NetworkHandler;
 import appeng.core.sync.packets.PacketInformPlayer;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.util.Platform;
-import appeng.util.item.AEItemStack;
 import appeng.util.item.MeaningfulItemIterator;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import java.io.IOException;
@@ -150,15 +148,6 @@ public class CraftingTreeNode {
                     final IAEItemStack available = inv.extractItems(fuzz, Actionable.MODULATE, src);
 
                     if (available != null) {
-                        if (available.getItem().hasContainerItem(available.getDefinition())) {
-                            final ItemStack is2 = Platform.getContainerItem(available.createItemStack());
-                            final IAEItemStack o = AEItemStack.fromItemStack(is2);
-
-                            if (o != null) {
-                                this.parent.addContainers(o);
-                            }
-                        }
-
                         if (!this.exhausted) {
                             final IAEItemStack is = this.job.checkUse(available);
 
@@ -222,16 +211,6 @@ public class CraftingTreeNode {
                 final IAEItemStack available = inv.extractItems(madeWhat, Actionable.MODULATE, src);
 
                 if (available != null) {
-
-                    if (parent != null && available.getItem().hasContainerItem(available.getDefinition())) {
-                        final ItemStack is2 = Platform.getContainerItem(available.createItemStack());
-                        final IAEItemStack o = AEItemStack.fromItemStack(is2);
-
-                        if (o != null) {
-                            this.parent.addContainers(o);
-                        }
-                    }
-
                     this.bytes += available.getStackSize();
                     l -= available.getStackSize();
 
@@ -275,14 +254,6 @@ public class CraftingTreeNode {
 
         if (job.isSimulation()) {
             this.bytes += l;
-            if (parent != null && this.what.getItem().hasContainerItem(this.what.getDefinition())) {
-                final ItemStack is2 = Platform.getContainerItem(this.what.copy().setStackSize(1).createItemStack());
-                final IAEItemStack o = AEItemStack.fromItemStack(is2);
-
-                if (o != null) {
-                    this.parent.addContainers(o);
-                }
-            }
             this.missing += l;
             final IAEItemStack rv = this.what.copy();
             rv.setStackSize(l);
